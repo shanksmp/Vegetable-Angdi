@@ -83,7 +83,11 @@ app.post("/register", async(req, res)=>{
 
             // const resp = await signup.save();
             // console.log(resp);
-            res.redirect("/register");
+            const toast = "liveToast";
+
+            res.render("registration",{
+                toastID:toast
+            });
 
         }
         else{
@@ -91,8 +95,9 @@ app.post("/register", async(req, res)=>{
         }
 
     } catch(err){
+        
         console.log(err);
-        res.status(500).json({msg:"Registration failed"});
+        res.status(500).json({msg:"Email already exists"},{condition:false});
     }
 });
 
@@ -106,7 +111,7 @@ app.post("/login", async(req, res)=>{
         const user = await Register.findOne({email});
 
         if(user == null){
-            res.status(400).json({msg:"Email not registered"});
+            res.json({msg:"No account linked to this email. Please register before continuing.", condition:false});
             return;
         }
 
@@ -121,18 +126,18 @@ app.post("/login", async(req, res)=>{
             });
 
 
-            res.redirect("/home");
+            res.json({msg:"Login successfull", condition:true});
 
         }
         else{
-            res.status(400).json({msg:"Email or password is incorrect"});
+            res.json({msg:"Email or password is incorrect.", condition:false});
             return;
         }
 
     }catch(err){
 
         console.log(err);
-        res.status(500).json({msg:"Server Error"});
+        res.status(500).json({msg:"Couldn't fetch the details at the moment. Please try again later.", condition:false});
     }
 
 });
